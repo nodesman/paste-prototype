@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pasta</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: rgba(0, 0, 0, 0); /* make it transparent */
+            width: 100%;
+            height: 100vh;
+        }
+        .rounded {
+            border-radius: 5px; /* set rounded corners */
+            background: #000; /* or any color you like */
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        .close {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size:8px;
+            border: 1px solid #111111;
+            background-color: #222222;
+            color: #444444;
+            font-family: Arial;
+            padding: 2px 3px;
+            cursor: default;
+        }
+
+    </style>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+
+</head>
+<body>
+<div class="rounded">
+    <div class="close">
+        ESC
+    </div>
+    <!-- Your content here -->
+</div>
+</body>
+</html>
