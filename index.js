@@ -1,47 +1,79 @@
 const { app, BrowserWindow, globalShortcut, nativeImage, Tray, Menu } = require('electron');
 
-let tray = null;
+class PastaApp {
+    constructor() {
+        this.win = null;
+        this.tray = null;
+    }
 
-function createWindow() {
-    const win = new BrowserWindow({
-        width: 400,
-        height: 400,
-        title: 'Pasta',
-        frame: false,
-        resizable: false,
-        fullscreenable: false,
-        transparent: true,
-        webPreferences: {
-            nodeIntegration: true
+    static getInstance() {
+        if (!PastaApp.instance) {
+            PastaApp.instance = new PastaApp();
         }
-    });
+        return PastaApp.instance;
+    }
 
-    const icon = nativeImage.createFromPath('path/to/icon.png'); // Replace 'path/to/icon.png' with the actual path
-    win.setIcon(icon);
+    createWindow() {
+        this.win = new BrowserWindow(this.getWindowOptions());
+        this.setIcon();
+        this.hideMenuBar();
+        this.loadApp();
+        this.createTray();
+        this.registerGlobalShortcuts();
+    }
 
-    win.setMenuBarVisibility(false);
-    win.setTitle("Pasta");
-    win.loadFile('index.html');
+    getWindowOptions() {
+        return {
+            width: 400,
+            height: 400,
+            title: 'Pasta',
+            frame: false,
+            resizable: false,
+            fullscreenable: false,
+            transparent: true,
+            webPreferences: {
+                nodeIntegration: true
+            }
+        };
+    }
 
-    // Create Tray Icon
-    tray = new Tray('paste.png'); // Replace 'path/to/tray_icon.png' with the actual path to the tray icon
-    const contextMenu = Menu.buildFromTemplate([
-        { label: 'Show App', click: () => win.show() },
-        { label: 'Quit', click: () => app.quit() }
-    ]);
-    tray.setContextMenu(contextMenu);
+    setIcon() {
+        const icon = nativeImage.createFromPath('path/to/icon.png');
+        this.win.setIcon(icon);
+    }
 
-    // Register Escape key event
-    globalShortcut.register('Escape', () => {
-        win.hide(); // This will hide the window, keeping the app running in the background
-    });
+    hideMenuBar() {
+        this.win.setMenuBarVisibility(false);
+    }
+
+    loadApp() {
+        this.win.setTitle("Pasta");
+        this.win.loadFile('index.html');
+    }
+
+    createTray() {
+        this.tray = new Tray('paste.png');
+        const contextMenu = Menu.buildFromTemplate([
+            { label: 'Show App', click: () => this.win.show() },
+            { label: 'Quit', click: () => app.quit() }
+        ]);
+        this.tray.setContextMenu(contextMenu);
+    }
+
+    registerGlobalShortcuts() {
+        globalShortcut.register('Escape', () => {
+            this.win.hide();
+        });
+    }
 }
 
+// Usage
 app.whenReady().then(() => {
-    createWindow();
+    const pastaApp = PastaApp.getInstance();
+    pastaApp.createWindow();
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
-            createWindow();
+            pastaApp.createWindow();
         }
     });
 });
